@@ -86,6 +86,8 @@ class Qwen3VLChat(Qwen3VLPromptMixin, BaseModel):
         self.post_process = post_process
         self.fps = kwargs.pop('fps', 2)
         self.nframe = kwargs.pop('nframe', 128)
+        self.attn_implementation = kwargs.pop('attn_implementation', 'flash_attention_2')
+        self.dtype = kwargs.pop('dtype', 'auto')
         self.FRAME_FACTOR = 2
         self.use_audio_in_video = use_audio_in_video
 
@@ -146,11 +148,17 @@ class Qwen3VLChat(Qwen3VLPromptMixin, BaseModel):
         else:
             if listinstr(['omni'], model_path.lower()):
                 self.model = Qwen3OmniMoeForConditionalGeneration.from_pretrained(
-                    model_path, dtype='auto', device_map='auto', attn_implementation='flash_attention_2'
+                    model_path,
+                    dtype=self.dtype,
+                    device_map='auto',
+                    attn_implementation=self.attn_implementation,
                 )
             else:
                 self.model = AutoModelForImageTextToText.from_pretrained(
-                    model_path, torch_dtype='auto', device_map='auto', attn_implementation='flash_attention_2'
+                    model_path,
+                    dtype=self.dtype,
+                    device_map='auto',
+                    attn_implementation=self.attn_implementation,
                 )
             self.model.eval()
 

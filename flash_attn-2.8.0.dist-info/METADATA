@@ -1,0 +1,4 @@
+Metadata-Version: 2.1
+Name: flash_attn
+Version: 2.8.0
+Summary: Local compatibility shim backed by vLLM FlashAttention kernels.

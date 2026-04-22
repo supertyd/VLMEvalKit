@@ -484,10 +484,16 @@ class VideoMMMU(VideoBaseDataset):
                     return False
             return True
 
-        cache_path = get_cache_path(repo_id)
-        if cache_path is not None and check_integrity(cache_path):
-            dataset_path = cache_path
+        dataset_path = None
+        local_dataset_path = os.environ.get('VIDEOMMMU_ROOT')
+        if local_dataset_path and check_integrity(local_dataset_path):
+            dataset_path = local_dataset_path
         else:
+            cache_path = get_cache_path(repo_id)
+
+        if dataset_path is None and cache_path is not None and check_integrity(cache_path):
+            dataset_path = cache_path
+        elif dataset_path is None:
 
             def unzip_hf_zip(pth):
                 import zipfile
